@@ -1,5 +1,5 @@
+from tkinter import ttk, Tk, Label, Button, LEFT, Frame, SUNKEN, Radiobutton, Entry, Listbox, END, E, NE, StringVar, IntVar, Menu, W, N
 from tkinter import *
-from tkinter import ttk
 from tkinter import messagebox
 import random
 
