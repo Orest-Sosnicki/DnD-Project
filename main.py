@@ -1,539 +1,8 @@
 from tkinter import ttk, Tk, Label, Button, LEFT, Frame, SUNKEN, Radiobutton, Entry, Listbox, END, E, NE, StringVar, IntVar, Menu, W, N, messagebox
 from tkinter import *
-import random
-
-
-def open_file(filename):
-    global numberList
-    file = filename
-    with open(file, "r") as fp:
-        for n in range(0, 26):
-            numberList[n].set(fp.readline())
-
-    save(filename)
-
-
-def confirm(filename):
-    global hold_check
-    check = Tk()
-    hold_check = check
-
-    check.title("Save Conformation")
-    check.geometry("130x50")
-
-    text = Label(check, text="Would you like to save")
-    text.grid(row=0, column=0, columnspan=2)
-
-    yes_option = Button(check, text="Yes", command=lambda: save(filename))
-    yes_option.grid(row=1, column=0)
-
-    no_option = Button(check, text="No", command=lambda: check.destroy())
-    no_option.grid(row=1, column=1)
-
-
-def save(filename):
-    global numberList, typeList, total_all, text_all, elements_all, hold_check
-
-    try:
-        typeList[0][
-            "text"] = f"Earth-{numberList[0].get()} Negative-{numberList[0].get()}"
-        typeList[1][
-            "text"] = f"Air-{numberList[1].get()} Positive-{numberList[1].get() * 2}"
-        typeList[2][
-            "text"] = f"Water-{numberList[2].get()} Earth-{numberList[2].get()}"
-        typeList[3][
-            "text"] = f"Air-{numberList[3].get()} Fire-{numberList[3].get()}"
-        typeList[4][
-            "text"] = f"Fire-{numberList[4].get()} Negative-{numberList[4].get() * 2}"
-        typeList[5][
-            "text"] = f"Water-{numberList[5].get()} Negative-{numberList[5].get()}"
-        typeList[6]["text"] = f"Water-{numberList[6].get()}"
-        typeList[7][
-            "text"] = f"Water-{numberList[7].get() * 2} Air-{numberList[7].get()}"
-        typeList[8][
-            "text"] = f"Fire-{numberList[8].get() * 2} Air-{numberList[8].get()}"
-        typeList[9][
-            "text"] = f"Fire-{numberList[9].get()} Earth-{numberList[9].get()}"
-        typeList[10]["text"] = f"Earth-{numberList[10].get()}"
-        typeList[11][
-            "text"] = f"Earth-{numberList[11].get() * 2} Negative-{numberList[11].get()}"
-        typeList[12]["text"] = f"Positive-{numberList[12].get() * 2}"
-        typeList[13]["text"] = f"Fire-{numberList[13].get()}"
-        typeList[14][
-            "text"] = f"Air-{numberList[14].get()} Negative-{numberList[14].get()}"
-        typeList[15]["text"] = f"Earth-{numberList[15].get() * 2}"
-        typeList[16]["text"] = f"Water-{numberList[16].get() * 2}"
-        typeList[17]["text"] = f"Negative-{numberList[17].get() * 2}"
-        typeList[18]["text"] = f"Air-{numberList[18].get()}"
-        typeList[19]["text"] = f"Fire-{numberList[19].get() * 2}"
-        typeList[20][
-            "text"] = f"Water-{numberList[20].get()} Earth-{numberList[20].get() * 2}"
-        typeList[21]["text"] = f"Air-{numberList[21].get() * 2}"
-        typeList[22]["text"] = f"Negative-{numberList[22].get()}"
-        typeList[23]["text"] = f"Positive-{numberList[23].get()}"
-        typeList[24][
-            "text"] = f"Air-{numberList[24].get()} Positive-{numberList[24].get()}"
-        typeList[25][
-            "text"] = f"Earth-{numberList[25].get()} Positive-{numberList[25].get() * 2}"
-
-        file = open(filename, "w")
-        for n in range(0, 26):
-            file.write(f"{numberList[n].get()}\n")
-        file.close()
-
-        total_all[0] = numberList[2].get() + numberList[5].get() + numberList[6].get() + (numberList[7].get() * 2) + \
-                       (numberList[16].get() * 2) + numberList[20].get()
-        total_all[3] = numberList[1].get() + numberList[3].get() + numberList[7].get() + numberList[8].get() + \
-                       numberList[14].get() + numberList[18].get() + (numberList[21].get() * 2) + numberList[24].get()
-        total_all[2] = numberList[3].get() + numberList[4].get() + (numberList[8].get() * 2) + numberList[9].get() + \
-                       numberList[13].get() + (numberList[19].get() * 2)
-        total_all[1] = numberList[0].get() + numberList[2].get() + numberList[9].get() + numberList[10].get() + \
-                       (numberList[11].get() * 2) + (numberList[15].get() * 2) + (numberList[20].get() * 2) + \
-                       numberList[25].get()
-        total_all[4] = (numberList[1].get() * 2) + (numberList[12].get() * 2) + numberList[23].get() + \
-                       numberList[24].get() + (numberList[25].get() * 2)
-        total_all[5] = numberList[0].get() + (numberList[4].get() * 2) + numberList[5].get() + numberList[11].get() + \
-                       numberList[14].get() + (numberList[17].get() * 2) + numberList[22].get()
-
-        elements_all[0]["text"] = f"Water: {total_all[0]}"
-        elements_all[1]["text"] = f"Earth: {total_all[1]}"
-        elements_all[2]["text"] = f"Fire: {total_all[2]}"
-        elements_all[3]["text"] = f"Air: {total_all[3]}"
-        elements_all[4]["text"] = f"Positive: {total_all[4]}"
-        elements_all[5]["text"] = f"Negative: {total_all[5]}"
-
-        if hold_check != "":
-            hold_check.destroy()
-
-        hold_check = ""
-    except TclError as error:
-        messagebox.showinfo("Invalid Entry",
-                            "You need to enter a number in each box")
-
-
-def show_info():
-    harvesting = """                                                Plants and Herbs
-        Plants are used for creating alchemical potions and mixtures,
-        and they are divided in four levels of rarity.
-
-        * Common plants: which have one essence
-        * Uncommon plants, which have two different essences
-        * Rare plants, which have two essences of the same type
-        * Very Rare plants, which have two essences of the same
-           type and one extra essence
-
-        To gather plants, herbs and other similar resources the
-        character must make an Intelligence (Nature) check (DC 15).
-        If the character success the check, the DM rolls a d20 to
-        determine the number of resources gathered.
-
-        d20                 Number of plants gathered
-
-        1-10                1
-        11-15              1d4
-        16-18              1d4+1
-        19                    1d4+2
-        20                    Roll twice"""
-
-    info = Tk()
-    info.title("Info")
-    info.geometry("370x350")
-
-    text_info1 = Label(info, text=harvesting, justify=LEFT)
-    text_info1.grid(row=0, column=0)
-
-
-def show_area(choice):
-    if choice == 0:
-        plants = """                                             
-                                        Arctic
-
-                1d20                Name                        Rarity 
-                1-5                   Blue herb                  Common
-                6-10                 Drojos ivy                 Common
-                11-15               Ucre bramble           Common
-                16-18               White poppy            Uncommon
-                19                     Kreet paste               Rare
-                20                     Angel flower            Very Rare"""
-
-    elif choice == 1:
-        plants = """                                            
-                                        Caves
-
-                1d20              Name                                Rarity
-                1-5                 Twilight wormwood       Common
-                6-10               Blue herb                         Common
-                11-15             Mandrake root                Common
-                16-18             Abyss flower                    Uncommon
-                19                   Kasuni juice                     Rare
-                20                   Blackleaf Rose                 Very Rare
-"""
-
-    elif choice == 2:
-        plants = """
-                                        Desert
-                                        
-                1d20              Name                              Rarity
-                1-5                 Drojos ivy                       Common
-                6-10               Ellond scrub                   Common
-                11-15             Ucre bramble                 Common
-                16-18             Dried Ephedra                Uncommon
-                19                   Olina petals                    Rare
-                20                   Ebrium fungus               Very Rare
-"""
-
-    elif choice == 3:
-        plants = """
-                                        Forests
-
-                1d20              Name                                      Rarity
-                1-5                 Twilight wormwood             Common
-                6-10               Drojos ivy                               Common
-                11-15             Ellond scrub                           Common
-                16-18             Blood herb                             Uncommon
-                19                   Thunderleaf                           Rare
-                20                   Wisp stems                            Very Rare
-"""
-
-    elif choice == 4:
-        plants = """                                
-                                    Lakes, rivers and ocean
-
-                1d20              Name                                    Rarity
-                1-5                 Twilight wormwood           Common
-                6-10               Blue herb                              Common
-                11-15             Mandrake root                     Common
-                16-18             Aniseed sap                          Uncommon
-                19                   Kreet paste                           Rare
-                20                   Chromatic mud                   Very Rare
-        """
-
-    elif choice == 5:
-        plants = """
-                                        Mountains
-
-                1d20            Name                                Rarity
-                1-5               Drojos ivy                         Common
-                6-10             Ellond scrub                     Common
-                11-15           Mandrake root                 Common
-                16-18           Ash chives                        Uncommon
-                19                 Kasuni juice                      Rare
-                20                 Dragontongue petals      Very Rare
-        """
-
-    elif choice == 6:
-        plants = """
-                                                  Plains
-
-                1d20           Name                                   Rarity
-                1-5              Ellond scrub                        Common
-                6-10            Mandrake root                    Common
-                11-15          Ucre bramble                      Common
-                16-18          Aniseed sap                         Uncommon
-                19                Lunar nectar                        Rare
-                20                Dragontongue petals         Very Rare
-        """
-
-    else:
-        plants = """
-                                                Swamps
-
-                1d20              Name                                  Rarity
-                1-5                Twilight wormwood          Common
-                6-10              Blue herb                             Common
-                11-15            Ucre bramble                      Common
-                16-18            Frenn moss                         Uncommon
-                19                  Ecire laurel                          Rare
-                20                  Spineflower berries            Very Rare
-
-        """
-
-    area = Tk()
-    area.title("Area")
-    area.geometry("350x180")
-
-    text_info1 = Label(area, text=plants, justify=LEFT)
-    text_info1.grid(row=0, column=0)
-
-
-def add_interface():
-    global total, radio_value, areas_list, area_box, found, output_list
-
-    add = Tk()
-    add.title("Add Herb")
-    add.geometry("200x200")
-
-    # frame ---------------------------------------------------------------------------------------------------------
-    option_frame = Frame(add,
-                         width=100,
-                         height=50,
-                         relief=SUNKEN,
-                         borderwidth=1)
-    option_frame.grid(row=0, column=0, columnspan=3)
-    # option_frame.pack_propagate(0)
-
-    full_radio = Radiobutton(option_frame,
-                             text="Quick Find",
-                             value=1,
-                             variable=radio_value,
-                             indicatoron=1,
-                             command=lambda: radio_button(1))
-    full_radio.pack(side="left")
-
-    herb_radio = Radiobutton(option_frame,
-                             text="Add Herb",
-                             value=2,
-                             variable=radio_value,
-                             indicatoron=1,
-                             command=lambda: radio_button(2))
-    herb_radio.pack(side="right")
-
-    full_radio.invoke()
-
-    # below frame----------------------------------------------------------------------------------------------------
-    instruction = Label(add, text="Enter Success: ", padx=5, pady=5)
-    instruction.grid(row=1, column=0)
-
-    found_enter = Entry(add, textvariable=found, width=2, justify="left")
-    found_enter.grid(row=1, column=1)
-
-    area_box = ttk.Combobox(add, values=areas_list, width=10, state="readonly")
-    area_box.grid(row=1, column=2, padx=5)
-    area_box.set(areas_list[3])
-
-    found_button = Button(add,
-                          text="Quick Add",
-                          command=lambda: quick_add(found_enter.get()))
-    found_button.grid(row=2, column=0)
-
-    total_label = Label(add, text="")
-    total_label.grid(row=2, column=1, columnspan=2)
-
-    total = total_label
-
-    # List Box --------------------------------------------------------------------------------------------------------
-    output_list = Listbox(add, width=30, height=6)
-    output_list.grid(row=3, column=0, columnspan=3)
-
-
-def radio_button(enter):
-    global radio_value
-    radio_value = enter
-
-
-def quick_add(option):
-    global radio_value, area_box, areas_list, output_list
-    try:
-        value = int(option)
-        total_gathered = value
-
-        output_list.delete(0, END)
-
-        plant_list = ["", "", "", "", "", ""]
-        count_list = [0, 0, 0, 0, 0, 0]
-
-        if radio_value == 1:
-            total_gathered = 0
-            while value != 0:
-                found_herb = random.randint(1, 20)
-                low_roll = random.randint(1, 4)
-
-                if found_herb <= 10:
-                    total_gathered += 1
-
-                elif found_herb <= 15:
-                    total_gathered += low_roll
-
-                elif found_herb <= 18:
-                    total_gathered += (low_roll + 1)
-
-                elif found_herb == 19:
-                    total_gathered += (low_roll + 2)
-
-                else:
-                    value += 2
-
-                value -= 1
-
-            total["text"] = f"Total gathered: {total_gathered}"
-
-        else:
-            total["text"] = f""
-
-        while total_gathered != 0:
-            roll = random.randint(1, 20)
-
-            if area_box.get() == "Arctic":
-                if roll <= 5:
-                    plant_list[0] = "Blue herb "
-                    count_list[0] += 1
-                elif roll <= 10:
-                    plant_list[1] = "Drojos ivy "
-                    count_list[1] += 1
-                elif roll <= 15:
-                    plant_list[2] = "Ucre bramble "
-                    count_list[2] += 1
-                elif roll <= 18:
-                    plant_list[3] = "White poppy "
-                    count_list[3] += 1
-                elif roll == 19:
-                    plant_list[4] = "Kreet paste "
-                    count_list[4] += 1
-                else:
-                    plant_list[5] = "Angel flower "
-                    count_list[5] += 1
-
-            elif area_box.get() == "Caves":
-                if roll <= 5:
-                    plant_list[0] = "Twilight wormwood "
-                    count_list[0] += 1
-                elif roll <= 10:
-                    plant_list[1] = "Blue herb "
-                    count_list[1] += 1
-                elif roll <= 15:
-                    plant_list[2] = "Mandrake root "
-                    count_list[2] += 1
-                elif roll <= 18:
-                    plant_list[3] = "Abyss flower "
-                    count_list[3] += 1
-                elif roll == 19:
-                    plant_list[4] = "Kasuni juice "
-                    count_list[4] += 1
-                else:
-                    plant_list[5] = "Blackleaf Rose "
-                    count_list[5] += 1
-
-            elif area_box.get() == "Desert":
-                if roll <= 5:
-                    plant_list[0] = "Drojos ivy "
-                    count_list[0] += 1
-                elif roll <= 10:
-                    plant_list[1] = "Ellond scrub "
-                    count_list[1] += 1
-                elif roll <= 15:
-                    plant_list[2] = "Ucre bramble "
-                    count_list[2] += 1
-                elif roll <= 18:
-                    plant_list[3] = "Dried Ephedra "
-                    count_list[3] += 1
-                elif roll == 19:
-                    plant_list[4] = "Olina petals "
-                    count_list[4] += 1
-                else:
-                    plant_list[5] = "Ebrium fungus "
-                    count_list[5] += 1
-
-            elif area_box.get() == "Forests":
-                if roll <= 5:
-                    plant_list[0] = "Twilight Wormwood "
-                    count_list[0] += 1
-                elif roll <= 10:
-                    plant_list[1] = "Drojos ivy "
-                    count_list[1] += 1
-                elif roll <= 15:
-                    plant_list[2] = "Ellond scrub "
-                    count_list[2] += 1
-                elif roll <= 18:
-                    plant_list[3] = "Blood herb "
-                    count_list[3] += 1
-                elif roll == 19:
-                    plant_list[4] = "Thunderleaf "
-                    count_list[4] += 1
-                else:
-                    plant_list[5] = "Wisp stems "
-                    count_list[5] += 1
-
-            elif area_box.get() == "Water":
-                if roll <= 5:
-                    plant_list[0] = "Twilight Wormwood "
-                    count_list[0] += 1
-                elif roll <= 10:
-                    plant_list[1] = "Blue herb "
-                    count_list[1] += 1
-                elif roll <= 15:
-                    plant_list[2] = "Mandrake root "
-                    count_list[2] += 1
-                elif roll <= 18:
-                    plant_list[3] = "Aniseed sap "
-                    count_list[3] += 1
-                elif roll == 19:
-                    plant_list[4] = "Kreet paste "
-                    count_list[4] += 1
-                else:
-                    plant_list[5] = "Chromatic mud "
-                    count_list[5] += 1
-
-            elif area_box.get() == "Mountains":
-                if roll <= 5:
-                    plant_list[0] = "Drojos ivy "
-                    count_list[0] += 1
-                elif roll <= 10:
-                    plant_list[1] = "Ellond scrub "
-                    count_list[1] += 1
-                elif roll <= 15:
-                    plant_list[2] = "Mandrake root "
-                    count_list[2] += 1
-                elif roll <= 18:
-                    plant_list[3] = "Ash chives "
-                    count_list[3] += 1
-                elif roll == 19:
-                    plant_list[4] = "Kasuni juice "
-                    count_list[4] += 1
-                else:
-                    plant_list[5] = "Dragontongue petals "
-                    count_list[5] += 1
-
-            elif area_box.get() == "Plains":
-                if roll <= 5:
-                    plant_list[0] = "Ellond scrub "
-                    count_list[0] += 1
-                elif roll <= 10:
-                    plant_list[1] = "Mandrake root "
-                    count_list[1] += 1
-                elif roll <= 15:
-                    plant_list[2] = "Ucre bramble "
-                    count_list[2] += 1
-                elif roll <= 18:
-                    plant_list[3] = "Anissed sap "
-                    count_list[3] += 1
-                elif roll == 19:
-                    plant_list[4] = "Lunar nectar "
-                    count_list[4] += 1
-                else:
-                    plant_list[5] = "Dragontongue petals "
-                    count_list[5] += 1
-
-            elif area_box.get() == "Swamps":
-                if roll <= 5:
-                    plant_list[0] = "Twilight wormwood "
-                    count_list[0] += 1
-                elif roll <= 10:
-                    plant_list[1] = "Blue herb "
-                    count_list[1] += 1
-                elif roll <= 15:
-                    plant_list[2] = "Ucre bramble "
-                    count_list[2] += 1
-                elif roll <= 18:
-                    plant_list[3] = "Frenn moss "
-                    count_list[3] += 1
-                elif roll == 19:
-                    plant_list[4] = "Ecire laurel "
-                    count_list[4] += 1
-                else:
-                    plant_list[5] = "Spineflower berries "
-                    count_list[5] += 1
-            total_gathered -= 1
-
-        new_plant_list = list(filter(None, plant_list))
-        new_count_list = list(filter(None, count_list))
-
-        combined_list = list(zip(new_plant_list, new_count_list))
-        for n in combined_list:
-            show = f"{n[0]} {n[1]}"
-            output_list.insert(END, show)
-
-    except ValueError:
-        messagebox.showinfo("Invalid Entry", "You need to enter a number")
+import text_block
+import save_open
+import add_herb
 
 
 def bomb_display():
@@ -823,8 +292,6 @@ def remove_ingredient(event):
                             "Trying to remove from the list too fast")
 
 
-hold_check = ""
-
 window = Tk()
 
 window.title("Arcane Creations: Version 2.1")
@@ -832,15 +299,12 @@ window.geometry("350x650")
 
 total = ""
 
-found = StringVar()
 areas_list = [
     "Arctic", "Caves", "Desert", "Forests", "Water", "Mountains", "Plains",
     "Swamps"
 ]
-area_box = StringVar()
 
 radio_value = IntVar()
-output_list = list()
 
 herb_listbox = ""
 ingredients_listbox = ""
@@ -853,7 +317,7 @@ use_ingredient = []
 
 effect = StringVar()
 additional_effect = ""
-repeat = ""
+repeat = 0
 display_calculated = list()
 display_total = list()
 
@@ -971,8 +435,8 @@ window.config(menu=menu_bar)
 # file menu ---------------------------------------------------------------------------------------------------
 file_menu = Menu(menu_bar, tearoff=False)
 menu_bar.add_cascade(label="File", menu=file_menu)
-file_menu.add_command(label="Open", command=lambda: open_file("DnD_Bombs"))
-file_menu.add_command(label="Save", command=lambda: confirm("DnD_Bombs"))
+file_menu.add_command(label="Open", command=lambda: save_open.open_file("DnD_Bombs", numberList, typeList, total_all, elements_all))
+file_menu.add_command(label="Save", command=lambda: save_open.confirm("DnD_Bombs", numberList, typeList, total_all, elements_all))
 file_menu.add_command(label="", state="disabled")
 file_menu.add_command(label="Open Backup",
                       command=lambda: open_file("DnD_Bombs_backup"))
@@ -984,21 +448,22 @@ file_menu.add_command(label="Exit", command=window.quit)
 # herb menu --------------------------------------------------------------------------------------------------
 herb_menu = Menu(menu_bar, tearoff=False)
 menu_bar.add_cascade(label="Herb", menu=herb_menu)
-herb_menu.add_command(label="Info", command=show_info)
+herb_menu.add_command(label="Info", command=text_block.show_info)
 
 # herb area(submenu) ---------------------------------------------------
 area_menu = Menu(herb_menu, tearoff=False)
 herb_menu.add_cascade(label="Area", menu=area_menu)
-area_menu.add_command(label="Arctic", command=lambda: show_area(0))
-area_menu.add_command(label="Caves", command=lambda: show_area(1))
-area_menu.add_command(label="Desert", command=lambda: show_area(2))
-area_menu.add_command(label="Forests", command=lambda: show_area(3))
-area_menu.add_command(label="Water", command=lambda: show_area(4))
-area_menu.add_command(label="Mountains", command=lambda: show_area(5))
-area_menu.add_command(label="Plains", command=lambda: show_area(6))
-area_menu.add_command(label="Swamps", command=lambda: show_area(7))
+area_menu.add_command(label="Arctic", command=lambda: text_block.show_area(0))
+area_menu.add_command(label="Caves", command=lambda: text_block.show_area(1))
+area_menu.add_command(label="Desert", command=lambda: text_block.show_area(2))
+area_menu.add_command(label="Forests", command=lambda: text_block.show_area(3))
+area_menu.add_command(label="Water", command=lambda: text_block.show_area(4))
+area_menu.add_command(label="Mountains",
+                      command=lambda: text_block.show_area(5))
+area_menu.add_command(label="Plains", command=lambda: text_block.show_area(6))
+area_menu.add_command(label="Swamps", command=lambda: text_block.show_area(7))
 
-herb_menu.add_command(label="Add Herb", command=add_interface)
+herb_menu.add_command(label="Add Herb", command=lambda: add_herb.add_interface(radio_value, areas_list, total))
 
 # bombs menu ---------------------------------------------------------------------------------------------------
 bomb_menu = Menu(menu_bar, tearoff=False)
