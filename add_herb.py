@@ -8,11 +8,11 @@ def radio_button(enter):
     global radio_value
     radio_value = enter
 
-def add_interface(radio_value, areas_list, total):
+def add_interface(radio_value, areas_list):
 
     add = Tk()
     add.title("Add Herb")
-    add.geometry("200x200")
+    add.geometry("250x230")
 
     # frame ---------------------------------------------------------------------------------------------------------
     option_frame = Frame(add,
@@ -58,16 +58,14 @@ def add_interface(radio_value, areas_list, total):
 
     found_button = Button(add,
                           text="Quick Add",
-                          command=lambda: quick_add(found_enter.get(),total, area_box, output_list))
+                          command=lambda: quick_add(found_enter.get(),area_box, output_list, total_label))
     found_button.grid(row=2, column=0)
 
     total_label = Label(add, text="")
     total_label.grid(row=2, column=1, columnspan=2)
 
-    total = total_label
 
-
-def quick_add(option, total, area_box, output_list):
+def quick_add(option, area_box, output_list, total_label):
     try:
         value = int(option)
         total_gathered = value
@@ -99,10 +97,10 @@ def quick_add(option, total, area_box, output_list):
 
                 value -= 1
 
-            total["text"] = f"Total gathered: {total_gathered}"
+            total_label["text"] = f"Total gathered: {total_gathered}"
 
         else:
-            total["text"] = f""
+            total_label["text"] = f""
 
         while total_gathered != 0:
             roll = random.randint(1, 20)
