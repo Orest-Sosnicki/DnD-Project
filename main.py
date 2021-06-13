@@ -5,34 +5,101 @@ import save_open
 import add_herb
 import bomb
 
+
 def parts_display():
-  
-  parts_list = Tk()
-  parts_list.title("Monster Parts List")
-  parts_list.geometry("400x400")
 
-  # Add parts ----------------------------------------------------------------------------------------------
-  add_labal = Label(parts_list, justify=LEFT, text="Part Name", height=2)
-  add_labal.grid(row=0, column=0)
+    parts_list = []
 
-  add_part = Entry(parts_list, justify=LEFT, width=25)
-  add_part.grid(row=0, column=1)
+    parts_Tk = Tk()
+    parts_Tk.title("Monster Parts List")
+    parts_Tk.geometry("450x400")
 
-  add_part_button = Button(parts_list, justify=LEFT, text="Add")
-  add_part_button.grid(row=0, column=2)
+    # Add parts ----------------------------------------------------------------------------------------------
+    part_name_label = Label(parts_Tk, justify=LEFT, text="Name", height=2)
+    part_name_label.grid(row=0, column=0)
 
-  # Parts list -----------------------------------------------------------------------------------------------
+    part_name_entry = Entry(parts_Tk, justify=LEFT, width=25)
+    part_name_entry.grid(row=0, column=1)
 
-  parts_label = Label(parts_list, text="List of Parts")
-  parts_label.grid(row=3, column=0)
+    part_number_label = Label(parts_Tk, justify=LEFT, text="Number", height=2)
+    part_number_label.grid(row=1, column=0)
 
-  parts_listbox = Listbox(parts_list, width=30, height=10)
-  parts_listbox.grid(row=4, column=0, rowspan=2, columnspan=7)
-  parts_listbox.bind("<Double-Button-1>", add_ingredient)
+    part_number_entry = Entry(parts_Tk, justify=LEFT, width=3)
+    part_number_entry.grid(row=1, column=1)
+
+    add_part_button = Button(parts_Tk, justify=LEFT,text="Add", command=lambda: add_parts(parts_list, part_name_entry, part_number_entry, parts_listbox))
+    add_part_button.grid(row=0, column=2)
+
+    plus1_button = Button(parts_Tk, text="+1", command=lambda: print())
+    plus1_button.grid(row=0, column=3)
+
+    remove_part_button = Button(parts_Tk, justify=LEFT, text="Remove", command=lambda: remove_parts(parts_listbox, parts_list))
+    remove_part_button.grid(row=1, column=2)
+
+    # Parts list -----------------------------------------------------------------------------------------------
+
+    parts_label = Label(parts_Tk, text="List of Parts")
+    parts_label.grid(row=3, column=1)
+
+    parts_listbox = Listbox(parts_Tk, width=30, height=10)
+    parts_listbox.grid(row=4, column=0, rowspan=2, columnspan=7)
+    parts_listbox.bind("<Double-Button-1>", add_ingredient)
+
+    open_parts(parts_list, parts_listbox)
 
 
-def bomb_display(additional_effect_list, numbers, herb_listbox, ingredients_listbox, numberList):
-        
+def open_parts(parts_list, parts_listbox):
+    file = "DnD_Part_List"
+    with open(file, "r") as fp:
+        for n in fp:
+            if (n[-1] == "\n"):
+                parts_list.append(n[0:-1])
+            else:
+                parts_list.append(n)
+
+    update_parts(parts_list, parts_listbox)
+
+
+def update_parts(parts_list, parts_listbox):
+    parts_listbox.delete(0, END)
+
+    for n in parts_list:
+        formating = f"{n}"
+        parts_listbox.insert(END, n)
+
+
+def save_parts(parts_list):
+    file = "DnD_Part_List"
+    with open(file, "w") as fp:
+        for n in parts_list:
+            fp.write(f"{n}\n")
+
+
+def add_parts(parts_list, part_name_entry, part_number_entry, parts_listbox):
+    try:
+
+      if part_name_entry.get() != "" and part_number_entry.get() != "":
+        parts_list.append(f"{part_name_entry.get()} {int(part_number_entry.get())}")
+      else:
+          print("empty box")
+    except:
+      print("number need to be a number")
+
+
+    update_parts(parts_list, parts_listbox)
+    save_parts(parts_list)
+
+
+def remove_parts(parts_listbox, parts_list):
+    hold = parts_listbox.curselection()
+    parts_list.pop(hold[0])
+    update_parts(parts_list, parts_listbox)
+    save_parts(parts_list)
+
+
+def bomb_display(additional_effect_list, numbers, herb_listbox,
+                 ingredients_listbox, numberList):
+
     craft = Tk()
 
     craft.title("Bomb Crafting")
@@ -72,7 +139,10 @@ def bomb_display(additional_effect_list, numbers, herb_listbox, ingredients_list
 
     herb_listbox = Listbox(craft, width=30, height=10)
     herb_listbox.grid(row=2, column=0, columnspan=2, rowspan=7)
-    herb_listbox.bind("<Double-Button-1>", lambda i : add_ingredient(i, herb_listbox, ingredients_listbox, amount_list, position_list, display_total))
+    herb_listbox.bind(
+        "<Double-Button-1>",
+        lambda i: add_ingredient(i, herb_listbox, ingredients_listbox,
+                                 amount_list, position_list, display_total))
 
     # ingredients want to us --------------------------------------------------------------------------------------
     ingredients_label = Label(craft, text="Ingredients")
@@ -80,7 +150,10 @@ def bomb_display(additional_effect_list, numbers, herb_listbox, ingredients_list
 
     ingredients_listbox = Listbox(craft, width=30, height=10)
     ingredients_listbox.grid(row=10, column=0, columnspan=2, rowspan=7)
-    ingredients_listbox.bind("<Double-Button-1>", lambda i : remove_ingredient(i, herb_listbox, ingredients_listbox, amount_list, position_list, display_total))
+    ingredients_listbox.bind(
+        "<Double-Button-1>",
+        lambda i: remove_ingredient(i, herb_listbox, ingredients_listbox,
+                                    amount_list, position_list, display_total))
 
     ingredients_listbox.delete(0, END)
     # effect total-------------------------------------------------------------------------------------------------
@@ -143,7 +216,7 @@ def bomb_display(additional_effect_list, numbers, herb_listbox, ingredients_list
     position_list = []
     count = 0
     element_totals = [0, 0, 0, 0, 0, 0]
-    
+
     for n in numberList:
         if n.get() != 0:
             amount_list.append(int(n.get()))
@@ -152,8 +225,9 @@ def bomb_display(additional_effect_list, numbers, herb_listbox, ingredients_list
 
     update_list(herb_listbox, amount_list, position_list)
 
+
 def calculate_total():
-    global effect, additional_effect, repeat, display_calculated, effect_list, effect_list,additional_effect_list, numbers
+    global effect, additional_effect, repeat, display_calculated, effect_list, effect_list, additional_effect_list, numbers
 
     element_totals = [0, 0, 0, 0, 0, 0]
 
@@ -219,7 +293,7 @@ def calculate_total():
 
 
 def update_list(herb_listbox, amount_list, position_list):
-    
+
     herb_listbox.delete(0, END)
     count = 0
 
@@ -229,7 +303,8 @@ def update_list(herb_listbox, amount_list, position_list):
         count += 1
 
 
-def add_ingredient(event, herb_listbox, ingredients_listbox, amount_list, position_list, display_total):
+def add_ingredient(event, herb_listbox, ingredients_listbox, amount_list,
+                   position_list, display_total):
 
     try:
         hold = herb_listbox.curselection()
@@ -266,8 +341,9 @@ def add_ingredient(event, herb_listbox, ingredients_listbox, amount_list, positi
         print("adding to fast")
 
 
-def remove_ingredient(event, herb_listbox, ingredients_listbox, amount_list, position_list, display_total):
-  
+def remove_ingredient(event, herb_listbox, ingredients_listbox, amount_list,
+                      position_list, display_total):
+
     try:
         hold = ingredients_listbox.curselection()
         number = hold[0]
@@ -310,7 +386,6 @@ window = Tk()
 
 window.title("Arcane Creations: Version 2.1")
 window.geometry("400x700")
-
 
 areas_list = [
     "Arctic", "Caves", "Desert", "Forests", "Water", "Mountains", "Plains",
@@ -376,7 +451,33 @@ element_label = [
     "EPP"
 ]
 
-numberList = [IntVar(), IntVar(), IntVar(), IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar(),IntVar()
+numberList = [
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar(),
+    IntVar()
 ]
 
 elements1 = f"Earth-{numberList[0].get()} Negative-{numberList[0].get()}"
@@ -422,13 +523,23 @@ window.config(menu=menu_bar)
 # file menu ---------------------------------------------------------------------------------------------------
 file_menu = Menu(menu_bar, tearoff=False)
 menu_bar.add_cascade(label="File", menu=file_menu)
-file_menu.add_command(label="Open", command=lambda: save_open.open_file("DnD_Bombs", numberList, typeList, total_all, elements_all))
-file_menu.add_command(label="Save", command=lambda: save_open.confirm("DnD_Bombs", numberList, typeList, total_all, elements_all))
+file_menu.add_command(
+    label="Open",
+    command=lambda: save_open.open_file("DnD_Bombs", numberList, typeList,
+                                        total_all, elements_all))
+file_menu.add_command(
+    label="Save",
+    command=lambda: save_open.confirm("DnD_Bombs", numberList, typeList,
+                                      total_all, elements_all))
 file_menu.add_command(label="", state="disabled")
-file_menu.add_command(label="Open Backup",
-                      command=lambda: save_open.open_file("DnD_Bombs_backup", numberList, typeList, total_all, elements_all))
-file_menu.add_command(label="Save Backup",
-                      command=lambda: save_open.confirm("DnD_Bombs_backup", numberList, typeList, total_all, elements_all))
+file_menu.add_command(
+    label="Open Backup",
+    command=lambda: save_open.open_file("DnD_Bombs_backup", numberList,
+                                        typeList, total_all, elements_all))
+file_menu.add_command(
+    label="Save Backup",
+    command=lambda: save_open.confirm("DnD_Bombs_backup", numberList, typeList,
+                                      total_all, elements_all))
 file_menu.add_command(label="", state="disabled")
 file_menu.add_command(label="Exit", command=window.quit)
 
@@ -450,17 +561,24 @@ area_menu.add_command(label="Mountains",
 area_menu.add_command(label="Plains", command=lambda: text_block.show_area(6))
 area_menu.add_command(label="Swamps", command=lambda: text_block.show_area(7))
 
-herb_menu.add_command(label="Add Herb", command=lambda: add_herb.add_interface(radio_value, areas_list))
+herb_menu.add_command(
+    label="Add Herb",
+    command=lambda: add_herb.add_interface(radio_value, areas_list))
 
 # bombs menu ---------------------------------------------------------------------------------------------------
 bomb_menu = Menu(menu_bar, tearoff=False)
 menu_bar.add_cascade(label="Bomb", menu=bomb_menu)
-bomb_menu.add_command(label="Craft", command=lambda: bomb_display(additional_effect_list,numbers, herb_listbox, ingredients_listbox, numberList))
+bomb_menu.add_command(
+    label="Craft",
+    command=lambda: bomb_display(additional_effect_list, numbers, herb_listbox,
+                                 ingredients_listbox, numberList))
 
 # Parts menu ---------------------------------------------------------------------------------------------------
 parts_menu = Menu(menu_bar, tearoff=False)
 menu_bar.add_cascade(label="Parts", menu=parts_menu)
-parts_menu.add_command(label="Monster Parts", command=parts_display)
+parts_menu.add_command(
+    label="Monster Parts",
+    command=lambda: parts_display())
 
 # Abyss Flower -------------------------------------------------------------------------------------------------
 herb1 = Label(window, text="Abyss flower:")
